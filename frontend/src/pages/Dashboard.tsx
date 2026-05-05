@@ -59,6 +59,26 @@ export default function DashboardPage() {
         <StepCard label="Streak" value={dash?.streak_days ?? 0} sub="days" />
       </div>
 
+      {/* Confidence summary */}
+      {(dash?.total_activities ?? 0) > 0 && (
+        <div className="bg-white rounded-xl shadow p-5 flex items-center gap-4">
+          <div className="flex-1">
+            <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Avg. Data Confidence</p>
+            <div className="flex items-center gap-3">
+              <div className="h-2 flex-1 bg-gray-200 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-indigo-500 rounded-full transition-all"
+                  style={{ width: `${Math.round((dash?.avg_confidence ?? 0) * 100)}%` }}
+                />
+              </div>
+              <span className="text-sm font-semibold text-indigo-700 shrink-0">
+                {Math.round((dash?.avg_confidence ?? 0) * 100)}%
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Achievements */}
       {(dash?.achievements.length ?? 0) > 0 && (
         <div className="bg-white rounded-xl shadow p-5">

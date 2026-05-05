@@ -8,6 +8,7 @@ use sqlx::SqlitePool;
 use crate::{
     error::{AppError, AppResult},
     models::{new_id, now_utc, Activity, CreateActivityRequest, ListActivitiesQuery, User},
+    utils::compute_streak,
 };
 use estimation::{estimate_steps, refine_stride_length};
 
@@ -193,24 +194,4 @@ async fn award_achievements(pool: &SqlitePool, user_id: &str) -> AppResult<()> {
     }
 
     Ok(())
-}
-
-fn compute_streak(activities: &[Activity]) -> i64 {
-    use std::collections::HashSet;
-    let days: HashSet<String> = activities
-        .iter()
-        .map(|a| a.completed_at[..10].to_string())
-        .collect();
-
-    let mut streak = 0i64;
-    let mut current = Utc::now().date_naive();
-    loop {
-        if days.contains(&current.to_string()) {
-            streak += 1;
-            current = current.pred_opt().unwrap_or(current);
-        } else {
-            break;
-        }
-    }
-    streak
 }

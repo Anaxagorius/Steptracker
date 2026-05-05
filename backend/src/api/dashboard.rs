@@ -7,6 +7,7 @@ use sqlx::SqlitePool;
 use crate::{
     error::AppResult,
     models::{Achievement, Activity, DashboardResponse},
+    utils::compute_streak,
 };
 
 pub async fn get_dashboard(
@@ -52,26 +53,4 @@ pub async fn get_dashboard(
         avg_confidence,
         achievements,
     }))
-}
-
-fn compute_streak(activities: &[Activity]) -> i64 {
-    use chrono::Utc;
-    use std::collections::HashSet;
-
-    let days: HashSet<String> = activities
-        .iter()
-        .map(|a| a.completed_at[..10].to_string())
-        .collect();
-
-    let mut streak = 0i64;
-    let mut current = Utc::now().date_naive();
-    loop {
-        if days.contains(&current.to_string()) {
-            streak += 1;
-            current = current.pred_opt().unwrap_or(current);
-        } else {
-            break;
-        }
-    }
-    streak
 }

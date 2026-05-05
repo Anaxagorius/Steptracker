@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { listRoutes, createRoute, getUser, type Route, type User } from '../api'
 import RouteMapPreview from '../components/RouteMapPreview'
 import { totalDistanceMetres, type LatLng } from '../utils/geo'
@@ -122,7 +123,7 @@ export default function RoutesPage() {
       {userExists === false && (
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-800">
           You need to set up your profile before creating routes.{' '}
-          <a href="/profile" className="font-semibold underline hover:text-amber-900">Go to Profile →</a>
+          <Link to="/profile" className="font-semibold underline hover:text-amber-900">Go to Profile →</Link>
         </div>
       )}
 
