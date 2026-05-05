@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { listActivities, listRoutes, createActivity, type Activity, type Route } from '../api'
 import ActivityForm from '../components/ActivityForm'
+import LiveTracker from '../components/LiveTracker'
 
 const USER_ID_KEY = 'stridequest_user_id'
 const getUserId = () => localStorage.getItem(USER_ID_KEY) ?? ''
@@ -12,6 +13,7 @@ export default function ActivityLog() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [showForm, setShowForm] = useState(false)
+  const [showLiveTracker, setShowLiveTracker] = useState(false)
 
   const load = () => {
     Promise.all([
@@ -40,18 +42,38 @@ export default function ActivityLog() {
     load()
   }
 
+  const handleLiveLog = async (data: {
+    steps_actual: number
+    distance_m: number
+    duration_secs: number
+    has_gps: boolean
+    has_sensor: boolean
+    started_at: string
+  }) => {
+    await createActivity({ user_id: userId, ...data })
+    load()
+  }
+
   if (loading) return <p className="text-gray-500">Loading…</p>
 
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-800">Activity Log</h1>
-        <button
-          onClick={() => setShowForm(true)}
-          className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700"
-        >
-          + Log Activity
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setShowLiveTracker(true)}
+            className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700"
+          >
+            📲 Track Live
+          </button>
+          <button
+            onClick={() => setShowForm(true)}
+            className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700"
+          >
+            + Log Activity
+          </button>
+        </div>
       </div>
 
       {error && <p className="text-red-500 text-sm">{error}</p>}
@@ -100,6 +122,13 @@ export default function ActivityLog() {
           routes={routes}
           onSubmit={handleLog}
           onClose={() => setShowForm(false)}
+        />
+      )}
+
+      {showLiveTracker && (
+        <LiveTracker
+          onSave={handleLiveLog}
+          onClose={() => setShowLiveTracker(false)}
         />
       )}
     </div>
