@@ -1,0 +1,1 @@
+{"root":["./src/App.tsx","./src/api.ts","./src/main.tsx","./src/components/ActivityForm.tsx","./src/components/NavBar.tsx","./src/components/StepCard.tsx","./src/pages/ActivityLog.tsx","./src/pages/Dashboard.tsx","./src/pages/Profile.tsx","./src/pages/Routes.tsx"],"version":"5.9.3"}
