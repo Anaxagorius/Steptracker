@@ -98,7 +98,6 @@ export default function ActivityLog() {
       {showForm && (
         <ActivityForm
           routes={routes}
-          userId={userId}
           onSubmit={handleLog}
           onClose={() => setShowForm(false)}
         />

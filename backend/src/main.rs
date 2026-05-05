@@ -2,6 +2,7 @@ mod api;
 mod db;
 mod error;
 mod models;
+mod utils;
 
 use axum::{
     routing::{get, post},

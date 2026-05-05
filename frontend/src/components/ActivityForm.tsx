@@ -3,7 +3,6 @@ import type { Route } from '../api'
 
 interface ActivityFormProps {
   routes: Route[]
-  userId: string
   onSubmit: (data: {
     route_id?: string
     distance_m: number
