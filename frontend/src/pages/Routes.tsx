@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { listRoutes, createRoute, type Route } from '../api'
+import { listRoutes, createRoute, getUser, type Route } from '../api'
 
 const USER_ID_KEY = 'stridequest_user_id'
 const getUserId = () => localStorage.getItem(USER_ID_KEY) ?? ''
@@ -9,6 +9,7 @@ const DEFAULT_STRIDE = (0.414 * 170) / 100
 
 export default function RoutesPage() {
   const userId = getUserId()
+  const [userExists, setUserExists] = useState<boolean | null>(null)
   const [routes, setRoutes] = useState<Route[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -23,7 +24,11 @@ export default function RoutesPage() {
 
   const load = () => {
     setLoading(true)
-    listRoutes(userId || undefined)
+    const userCheck = userId
+      ? getUser(userId).then(() => setUserExists(true)).catch(() => { setUserExists(false) })
+      : Promise.resolve().then(() => setUserExists(false))
+    userCheck
+      .then(() => listRoutes(userId || undefined))
       .then(setRoutes)
       .catch((e: unknown) => setError(e instanceof Error ? e.message : 'Error'))
       .finally(() => setLoading(false))
@@ -60,11 +65,19 @@ export default function RoutesPage() {
         <h1 className="text-2xl font-bold text-gray-800">Routes</h1>
         <button
           onClick={() => setShowModal(true)}
-          className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700"
+          disabled={userExists !== true}
+          className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed"
         >
           + New Route
         </button>
       </div>
+
+      {userExists === false && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-800">
+          You need to set up your profile before creating routes.{' '}
+          <a href="/profile" className="font-semibold underline hover:text-amber-900">Go to Profile →</a>
+        </div>
+      )}
 
       {error && <p className="text-red-500 text-sm">{error}</p>}
 
